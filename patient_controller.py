@@ -10,23 +10,30 @@ from schemas import (
 
 patient_router = APIRouter(prefix='/patient')
 
+
 @patient_router.post('/', description='Create a new patient')
 async def patient_create(patient_input: PatientCreateInput):
     try:
         patient_input.password = hash_password(patient_input.password)
         doctor = await create_patient(patient_input)
-        token = create_access_token(data=TokenData(id=doctor.id, name=doctor.name))
+        token = create_access_token(
+            data=TokenData(id=doctor.id, name=doctor.name))
 
-        response = JSONResponse(content={'message': 'Sua conta foi criada com sucesso!'}, status_code=201)
-        response.set_cookie("session", token, httponly=False, secure=True, samesite="none")
+        response = JSONResponse(
+            content={'message': 'Sua conta foi criada com sucesso!'}, status_code=201)
+        response.set_cookie("session", token, httponly=False,
+                            secure=True, samesite="none")
         return response
     except Exception:
-        raise HTTPException(500, content={"message": "Houve um erro ao criar seu usuário"})
-    
+        raise HTTPException(
+            500, content={"message": "Houve um erro ao criar seu usuário"})
+
+
 @patient_router.get('/', description='Get all tests')
 async def get_tests():
     try:
         # Aqui retornaria todos os exames que o paciente enviou
         return {'message': 'ok'}
     except Exception:
-        raise HTTPException(500, detail={"message": "Houve um erro ao retornar os exames"})
+        raise HTTPException(
+            500, detail={"message": "Houve um erro ao retornar os exames"})
